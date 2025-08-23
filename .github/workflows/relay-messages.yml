@@ -31,7 +31,7 @@ jobs:
 
       - name: Relay messages
         env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DISCORD_TOKEN: ${{ vars.DISCORD_TOKEN }}
           RELAY_ROUTS:   ${{ vars.RELAY_ROUTS }}
           
         run: node youtube/relay.mjs

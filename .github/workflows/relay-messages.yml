@@ -1,0 +1,50 @@
+# .github/workflows/relay-messages.yml
+name: 🔁 Relay Discord Messages
+
+on:
+  repository_dispatch:
+    types: [relay-youtube-videos]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  relay:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          persist-credentials: true
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Relay messages
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          RELAY_ROUTS:   ${{ vars.RELAY_ROUTS }}
+          
+        run: node youtube/relay.mjs
+
+      - name: Commit updated state
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git stash --include-untracked || true
+          git pull --rebase origin main
+          git stash pop || true
+
+          git add youtube/lastMessageIds.json
+          git diff --cached --quiet || git commit -m "ci: update youtube/lastMessageIds.json"
+          git push

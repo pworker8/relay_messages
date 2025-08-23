@@ -1,0 +1,15 @@
+{
+  "name": "relay_messages",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "screenshot.js",
+  "scripts": {
+    "start": "node screenshot.js",
+    "newa": "node getrss.mjs",
+    "earnings": "node fetchEarnings.mjs"
+  },
+  "dependencies": {
+    "discord.js": "^14.0.0",
+    "dotenv": "^17.2.1"
+  }
+}

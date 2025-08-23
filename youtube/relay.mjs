@@ -63,8 +63,13 @@ const lastMap = loadJson(STATE_FILE, {}); // { [sourceId]: lastId }
       // GET messages via REST (no Gateway)
       const fetched = await rest.get(Routes.channelMessages(source), { query: options });
 
-      // Sort ASC by snowflake so we send oldest→newest and can save the max id
-      const sorted = [...fetched].sort((a, b) => BigInt(a.id) - BigInt(b.id));
+  	  // Sort ASC by snowflake so we send oldest→newest and can save the max id
+	  const sorted = [...fetched].sort((a, b) => {
+	    const A = BigInt(a.id);
+	    const B = BigInt(b.id);
+	    return A < B ? -1 : A > B ? 1 : 0;
+	  });
+	  
       console.log(`Fetched ${sorted.length} new messages`);
 
       // Helper to send to target (webhook or channel ID)
